@@ -78,8 +78,17 @@ public class ProductServlet extends HttpServlet {
 	private void addProduct(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		String name = request.getParameter("name");
+		name = new String(name.getBytes("ISO8859-1"), "UTF-8");
 		String code = request.getParameter("code");
+		code = new String(code.getBytes("ISO8859-1"), "UTF-8");
 		String minStock = request.getParameter("minStock");
+		System.out.println(name + "  " + code + "  " + minStock);
+
+		// request.setCharacterEncoding("UTF-8");
+		// name = request.getParameter("name");
+		// code = request.getParameter("code");
+		// minStock = request.getParameter("minStock");
+		// System.out.println(name + "  " + code + "  " + minStock);
 		Product product = new Product();
 		product.setName(name);
 		product.setCode(code);

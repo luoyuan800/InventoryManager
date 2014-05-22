@@ -14,6 +14,7 @@ import javax.persistence.Table;
 public class InventoryTransactionDetail {
 	private Integer id;
 	private Product product;
+	private Integer quantity;
 	private InventoryTransaction inventoryTransaction;
 
 	@Id
@@ -35,6 +36,15 @@ public class InventoryTransactionDetail {
 
 	public void setProduct(Product product) {
 		this.product = product;
+	}
+
+	@Column(name = "quantity")
+	public Integer getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(Integer quantity) {
+		this.quantity = quantity;
 	}
 
 	@ManyToOne

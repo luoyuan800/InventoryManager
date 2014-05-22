@@ -73,10 +73,12 @@ public class ProductDeliveryServlet extends HttpServlet {
 				response);
 	}
 
-	private void commit(HttpServletRequest request, HttpServletResponse response) {
+	private void commit(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		this.saveDeliveryResult(request, response);
 		this.productDeliveryService = this.getProductDeliveryServie(request);
 		this.productDeliveryService.delivery();
+		request.getRequestDispatcher("/index.jsp").forward(request, response);
 	}
 
 	private void saveDeliveryResult(HttpServletRequest request,

@@ -25,7 +25,7 @@ public class InventoryCheckingServiceBean implements
 	public void updateInventory() {
 		InventoryTransaction inventTrans = new InventoryTransaction();
 		inventTrans.setDate(new Date());
-		inventTrans.setType("C");
+		inventTrans.setType("盘点");
 		if (this.checkResult.keySet().size() != 0) {
 			for (Integer id : checkResult.keySet()) {
 				Product product = entityManager.find(Product.class, id);
@@ -35,6 +35,7 @@ public class InventoryCheckingServiceBean implements
 						realQuantity >= 0 ? realQuantity : -realQuantity);
 				InventoryTransactionDetail inventTransDetail = new InventoryTransactionDetail();
 				inventTransDetail.setProduct(product);
+				inventTransDetail.setQuantity(checkResult.get(id));
 				inventTransDetail.setInventoryTransaction(inventTrans);
 				inventTrans.getInventoryTransactions().add(inventTransDetail);
 			}

@@ -1,6 +1,7 @@
 package org.lgy.inventory.service.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -9,6 +10,7 @@ import javax.persistence.Query;
 
 import org.lgy.inventory.common.Pagination;
 import org.lgy.inventory.entity.Inventory;
+import org.lgy.inventory.entity.InventoryTransactionDetail;
 import org.lgy.inventory.entity.Product;
 import org.lgy.inventory.service.ProductServiceLocal;
 
@@ -60,6 +62,15 @@ public class ProductServiceBean implements ProductServiceLocal {
 	private long totalRecords() {
 		Query query = entityManager.createQuery("select count(*) from Product");
 		return (Long) query.getSingleResult();
+	}
+
+	@Override
+	public Set<InventoryTransactionDetail> getProductInventTransDetail(
+			Integer id) {
+		Set<InventoryTransactionDetail> result = entityManager.find(
+				Product.class, id).getInventoryTransactions();
+		result.size();
+		return result;
 	}
 
 }

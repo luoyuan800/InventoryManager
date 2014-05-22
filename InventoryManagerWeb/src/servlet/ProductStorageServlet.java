@@ -73,10 +73,12 @@ public class ProductStorageServlet extends HttpServlet {
 				response);
 	}
 
-	private void commit(HttpServletRequest request, HttpServletResponse response) {
+	private void commit(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		this.addStorageResult(request);
 		this.productStorageService = this.getProductStorageService(request);
 		this.productStorageService.storage();
+		request.getRequestDispatcher("/index.jsp").forward(request, response);
 	}
 
 	private ProductStorageServiceLocal getProductStorageService(

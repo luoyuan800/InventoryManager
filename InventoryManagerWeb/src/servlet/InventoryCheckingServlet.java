@@ -65,9 +65,7 @@ public class InventoryCheckingServlet extends HttpServlet {
 		this.saveCheckingResults(request, response);
 		inventoryCheckingService = this.getInventoryCheckingService(request);
 		inventoryCheckingService.updateInventory();
-		request.getRequestDispatcher("ProductServlet?pageIndex=1&pageSize=3")
-				.forward(request, response);
-
+		request.getRequestDispatcher("/index.jsp").forward(request, response);
 	}
 
 	private void getProductForList(HttpServletRequest request,

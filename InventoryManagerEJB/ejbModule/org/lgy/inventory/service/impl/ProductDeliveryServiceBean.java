@@ -23,7 +23,7 @@ public class ProductDeliveryServiceBean implements ProductDeliveryServiceLocal {
 	public void delivery() {
 		InventoryTransaction inventTrans = new InventoryTransaction();
 		inventTrans.setDate(new Date());
-		inventTrans.setType("I");
+		inventTrans.setType("出库");
 		if (this.deliveryResult.keySet().size() != 0) {
 			for (Integer id : this.deliveryResult.keySet()) {
 				Product product = this.entityManager.find(Product.class, id);
@@ -32,6 +32,7 @@ public class ProductDeliveryServiceBean implements ProductDeliveryServiceLocal {
 								- this.deliveryResult.get(id));
 				InventoryTransactionDetail inventTransDetail = new InventoryTransactionDetail();
 				inventTransDetail.setProduct(product);
+				inventTransDetail.setQuantity(deliveryResult.get(id));
 				inventTransDetail.setInventoryTransaction(inventTrans);
 				inventTrans.getInventoryTransactions().add(inventTransDetail);
 			}

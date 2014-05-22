@@ -53,7 +53,10 @@
 							&nbsp;&nbsp;
 							<a href="ProductServlet?action=remove&pid=${p.id }" style="text-decoration: none;">
 								<img src="image/btn_delete.png" style="border-color: #FFFFFF;"/>
-							</a>&nbsp;
+							</a>
+							&nbsp;&nbsp;
+							<a href="ProductServlet?action=trans&pid=${p.id }" style="text-decoration: none;" target="_blank">事务详情</a>
+							&nbsp;
 						</td>
 					</tr>
 				</c:forEach>

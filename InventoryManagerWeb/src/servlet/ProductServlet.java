@@ -2,6 +2,7 @@ package servlet;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.lgy.inventory.common.Pagination;
+import org.lgy.inventory.entity.InventoryTransactionDetail;
 import org.lgy.inventory.entity.Product;
 import org.lgy.inventory.service.ProductServiceLocal;
 
@@ -53,6 +55,8 @@ public class ProductServlet extends HttpServlet {
 			this.updateProduct(request, response);
 		else if (action.equals("remove"))
 			this.removeProduct(request, response);
+		else if (action.equals("trans"))
+			this.getTransactionDetails(request, response);
 	}
 
 	private void getProductsForList(HttpServletRequest request,
@@ -131,6 +135,16 @@ public class ProductServlet extends HttpServlet {
 		this.productService.removeProduct(product);
 		request.getRequestDispatcher(
 				"ProductServlet?action=list&pageIndex=1&pageSize=3").forward(
+				request, response);
+	}
+
+	private void getTransactionDetails(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		String pid = request.getParameter("pid");
+		Set<InventoryTransactionDetail> transDetails = this.productService
+				.getProductInventTransDetail(Integer.parseInt(pid));
+		request.setAttribute("transDetails", transDetails);
+		request.getRequestDispatcher("inventTransDetailList.jsp").forward(
 				request, response);
 	}
 }

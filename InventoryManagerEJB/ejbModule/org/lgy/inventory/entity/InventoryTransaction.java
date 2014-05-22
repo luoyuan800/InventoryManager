@@ -47,7 +47,7 @@ public class InventoryTransaction {
 	}
 
 	public void setType(String type) {
-		this.type = type;
+			this.type = type;
 	}
 
 	@OneToMany(mappedBy = "inventoryTransaction", cascade = {

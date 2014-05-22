@@ -16,7 +16,7 @@
 	<form method="post" action="ProductServlet">
 		<input type="button" value="产品列表" onclick="buttonClick('ProductServlet?action=list&pageIndex=1&pageSize=3')"/>
 		<input type="button" value="产品入库" onclick="buttonClick('ProductStorageServlet?action=list&pageIndex=1&pageSize=3')"/>
-		<input type="button" value="产品出库" onclick="buttonClick('')"/>
+		<input type="button" value="产品出库" onclick="buttonClick('ProductDeliveryServlet?action=list&pageIndex=1&pageSize=3')"/>
 		<input type="button" value="库存盘点" onclick="buttonClick('InventoryCheckingServlet?action=list&pageIndex=1&pageSize=3')"/>
 	</form>
 </body>

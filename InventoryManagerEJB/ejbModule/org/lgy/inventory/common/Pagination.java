@@ -1,4 +1,4 @@
-package common;
+package org.lgy.inventory.common;
 
 public class Pagination {
 	private int start = 0;

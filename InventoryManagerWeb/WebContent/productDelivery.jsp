@@ -5,25 +5,22 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>产品入库</title>
+<title>产品出库</title>
 <script type="text/javascript">
-	function check(id){
-		var storageQuantity = document.getElementById(id);
-		if (isNaN(storageQuantity.value)){
-			alert("数据非法！");
-			storageQuantity.focus();
-		}
-		else if (parseInt(storageQuantity.value) < 0){
-			alert("数据非法！");
-			storageQuantity.focus();
-		}
-	}
 	function changePage(num){
 		var pageIndex = document.getElementById("pageIndex");
 		pageIndex.value = parseInt(pageIndex.value) + parseInt(num);
 		document.forms[0].submit();
 	}
-	function storage(){
+	function check(id){
+		var currentQuantity = document.getElementById("currentQuantity" + id);
+		var deliveryQuantity = document.getElementById("deliveryQuantity" + id);
+		if (isNaN(deliveryQuantity.value) || (parseInt(currentQuantity.value) < parseInt(deliveryQuantity.value))){
+			alert("数据非法！");
+			deliveryQuantity.focus();
+		}
+	}
+	function delivery(){
 		var action = document.getElementById("action");
 		action.value = "commit";
 		document.forms[0].submit();
@@ -31,17 +28,17 @@
 </script>
 </head>
 <body>
-	<form action="ProductStorageServlet" method="post">
+	<form action="ProductDeliveryServlet" method="post">
 		<input type="hidden" id="action" name="action" value="list"/>
 		<input type="hidden" id="pageIndex" name="pageIndex" value="${requestScope.pagination.currentPage }"/>
 		<input type="hidden" name="pageSize" value="3"/>
 		<table border="1px">
 			<thead>
 				<tr>
-					<th>产品名称</th>
-					<th>产品编号</th>
-					<th>当前库存</th>
-					<th>入库数量</th>
+					<td>产品名称</td>
+					<td>产品编号</td>
+					<td>当前库存</td>
+					<td>出库数量</td>
 				</tr>
 			</thead>
 			<tbody>
@@ -49,10 +46,12 @@
 					<tr>
 						<td>${p.name }</td>
 						<td>${p.code }</td>
-						<td>${p.inventory.quantity }</td>
+						<td>
+							<input type="text" id="currentQuantity${p.id }" value="${p.inventory.quantity }" readonly="readonly"/>
+						</td>
 						<td>
 							<input type="hidden" name="id" value="${p.id }"/>
-							<input type="text" id="storageQuantity${p.id }" name="storageQuantity" onblur="check('storageQuantity${p.id}')"/>
+							<input type="text" id="deliveryQuantity${p.id }" name="deliveryQuantity" onblur="check(${p.id});"/>
 						</td>
 					</tr>
 				</c:forEach>
@@ -63,12 +62,12 @@
 			<a href="javascript:void(0);" onclick="changePage(-1);">上一页</a>
 		</c:if>
 		${requestScope.pagination.currentPage }
-		<c:if test="${requestScope.pagination.currentPage >= requestScope.pagination.totalPages }">下一页</c:if>
+		<c:if test="${requestScope.pagination.currentPage == requestScope.pagination.totalPages }">下一页</c:if>
 		<c:if test="${requestScope.pagination.currentPage < requestScope.pagination.totalPages }">
 			<a href="javascript:void(0);" onclick="changePage(1);">下一页</a>
 		</c:if>
 		<br/>
-		<input type="button" value="全部入库" onclick="storage();"/>
+		<input type="button" value="确认出库" onclick="delivery();"/>
 	</form>
 </body>
 </html>

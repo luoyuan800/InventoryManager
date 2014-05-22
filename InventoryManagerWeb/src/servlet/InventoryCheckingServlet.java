@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.lgy.inventory.common.Pagination;
 import org.lgy.inventory.entity.Product;
 import org.lgy.inventory.service.InventoryCheckingServiceLocal;
 import org.lgy.inventory.service.ProductServiceLocal;
@@ -76,20 +77,22 @@ public class InventoryCheckingServlet extends HttpServlet {
 		Integer pageIndex = Integer.parseInt(index);
 		String size = request.getParameter("pageSize");
 		Integer pageSize = Integer.parseInt(size);
-		List<Product> products = this.productService.getProducts(pageIndex,
-				pageSize);
+		Pagination pagination = new Pagination();
+		pagination.setCurrentPage(pageIndex < 1 ? 1 : pageIndex);
+		pagination.setPageSize(pageSize);
+		List<Product> products = this.productService.getProducts(pagination);
+		request.setAttribute("pagination", pagination);
 		request.setAttribute("products", products);
-		request.setAttribute("pageIndex", pageIndex);
 		request.getRequestDispatcher("/inventoryChecking.jsp").forward(request,
 				response);
 	}
 
 	private void saveCheckingResults(HttpServletRequest request,
 			HttpServletResponse response) {
-		String[] ids = request.getParameterValues("id");
-		if (ids == null)
-			return;
 		String[] differences = request.getParameterValues("difference");
+		if (differences == null)
+			return;
+		String[] ids = request.getParameterValues("id");
 		inventoryCheckingService = this.getInventoryCheckingService(request);
 		for (int i = 0; i < ids.length; i++) {
 			if (differences[i] != "") {

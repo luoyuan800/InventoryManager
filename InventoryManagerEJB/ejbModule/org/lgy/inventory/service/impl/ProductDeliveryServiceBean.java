@@ -11,26 +11,25 @@ import javax.persistence.PersistenceContext;
 import org.lgy.inventory.entity.InventoryTransaction;
 import org.lgy.inventory.entity.InventoryTransactionDetail;
 import org.lgy.inventory.entity.Product;
-import org.lgy.inventory.service.ProductStorageServiceLocal;
+import org.lgy.inventory.service.ProductDeliveryServiceLocal;
 
 @Stateful
-public class ProductStorageServiceBean implements ProductStorageServiceLocal {
-
+public class ProductDeliveryServiceBean implements ProductDeliveryServiceLocal {
 	@PersistenceContext(unitName = "inventoryPersistenceUnit")
 	private EntityManager entityManager;
-	private Map<Integer, Integer> storageResult = new HashMap<Integer, Integer>();
+	private Map<Integer, Integer> deliveryResult = new HashMap<Integer, Integer>();
 
 	@Override
-	public void storage() {
+	public void delivery() {
 		InventoryTransaction inventTrans = new InventoryTransaction();
 		inventTrans.setDate(new Date());
 		inventTrans.setType("I");
-		if (this.storageResult.keySet().size() != 0) {
-			for (Integer id : this.storageResult.keySet()) {
+		if (this.deliveryResult.keySet().size() != 0) {
+			for (Integer id : this.deliveryResult.keySet()) {
 				Product product = this.entityManager.find(Product.class, id);
 				product.getInventory().setQuantity(
-						this.storageResult.get(id)
-								+ product.getInventory().getQuantity());
+						product.getInventory().getQuantity()
+								- this.deliveryResult.get(id));
 				InventoryTransactionDetail inventTransDetail = new InventoryTransactionDetail();
 				inventTransDetail.setProduct(product);
 				inventTransDetail.setInventoryTransaction(inventTrans);
@@ -41,8 +40,8 @@ public class ProductStorageServiceBean implements ProductStorageServiceLocal {
 	}
 
 	@Override
-	public void addStorageResult(Integer id, Integer quantity) {
-		this.storageResult.put(id, quantity);
+	public void addDeliveryResult(Integer id, Integer quantity) {
+		this.deliveryResult.put(id, quantity);
 	}
 
 }

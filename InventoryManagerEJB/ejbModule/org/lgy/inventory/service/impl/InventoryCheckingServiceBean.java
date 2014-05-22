@@ -26,18 +26,20 @@ public class InventoryCheckingServiceBean implements
 		InventoryTransaction inventTrans = new InventoryTransaction();
 		inventTrans.setDate(new Date());
 		inventTrans.setType("C");
-		for (Integer id : checkResult.keySet()) {
-			Product product = entityManager.find(Product.class, id);
-			int currentQuantity = product.getInventory().getQuantity();
-			int realQuantity = currentQuantity + checkResult.get(id);
-			product.getInventory().setQuantity(
-					realQuantity >= 0 ? realQuantity : -realQuantity);
-			InventoryTransactionDetail inventTransDetail = new InventoryTransactionDetail();
-			inventTransDetail.setProduct(product);
-			inventTransDetail.setInventoryTransaction(inventTrans);
-			inventTrans.getInventoryTransactions().add(inventTransDetail);
+		if (this.checkResult.keySet().size() != 0) {
+			for (Integer id : checkResult.keySet()) {
+				Product product = entityManager.find(Product.class, id);
+				int currentQuantity = product.getInventory().getQuantity();
+				int realQuantity = currentQuantity - checkResult.get(id);
+				product.getInventory().setQuantity(
+						realQuantity >= 0 ? realQuantity : -realQuantity);
+				InventoryTransactionDetail inventTransDetail = new InventoryTransactionDetail();
+				inventTransDetail.setProduct(product);
+				inventTransDetail.setInventoryTransaction(inventTrans);
+				inventTrans.getInventoryTransactions().add(inventTransDetail);
+			}
+			entityManager.persist(inventTrans);
 		}
-		entityManager.persist(inventTrans);
 	}
 
 	@Override

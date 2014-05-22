@@ -27,7 +27,7 @@
 <body>
 	<form method="post" action="ProductServlet">
 		<input type="hidden" id="action" name="action" value="list"/>
-		<input type="hidden" id="pageIndex" name="pageIndex" value="${pageIndex }"/>
+		<input type="hidden" id="pageIndex" name="pageIndex" value="${requestScope.pagination.currentPage }"/>
 		<input type="hidden" id="pageSize" name="pageSize" value="3"/>
 		<table border="1px">
 			<thead>
@@ -59,9 +59,16 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<input type="button" value="上一页" onclick="changePage(-1)"/>
-		${pageIndex }
-		<input type="button" value="下一页" onclick="changePage(1)"/><br>
+		<c:if test="${requestScope.pagination.currentPage <= 1 }">上一页</c:if>
+		<c:if test="${requestScope.pagination.currentPage > 1 }">
+			<a href="javascript:void(0);" onclick="changePage(-1)">上一页</a>
+		</c:if>
+		${requestScope.pagination.currentPage }
+		<c:if test="${requestScope.pagination.currentPage >= requestScope.pagination.totalPages }">下一页</c:if>
+		<c:if test="${requestScope.pagination.currentPage < requestScope.pagination.totalPages }">
+			<a href="javascript:void(0);" onclick="changePage(1)">下一页</a>
+		</c:if>
+		<br>
 		<a href="addProduct.jsp">添加产品</a>
 	</form>
 </body>

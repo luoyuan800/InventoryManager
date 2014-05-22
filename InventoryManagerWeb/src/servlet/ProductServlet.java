@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.lgy.inventory.common.Pagination;
 import org.lgy.inventory.entity.Product;
 import org.lgy.inventory.service.ProductServiceLocal;
 
@@ -56,21 +57,14 @@ public class ProductServlet extends HttpServlet {
 
 	private void getProductsForList(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		String index = request.getParameter("pageIndex");
-		String size = request.getParameter("pageSize");
-		int pageIndex = 1, pageSize = 3;
-		if (index != null) {
-			pageIndex = Integer.parseInt(index);
-			if (pageIndex < 1)
-				pageIndex = 1;
-		}
-		if (size != null) {
-			pageSize = Integer.parseInt(size);
-		}
-		List<Product> products = this.productService.getProducts(pageIndex,
-				pageSize);
+		Integer pageIndex = Integer.parseInt(request.getParameter("pageIndex"));
+		Integer pageSize = Integer.parseInt(request.getParameter("pageSize"));
+		Pagination pagination = new Pagination();
+		pagination.setCurrentPage(pageIndex < 1 ? 1 : pageIndex);
+		pagination.setPageSize(pageSize);
+		List<Product> products = this.productService.getProducts(pagination);
+		request.setAttribute("pagination", pagination);
 		request.setAttribute("products", products);
-		request.setAttribute("pageIndex", pageIndex);
 		request.getRequestDispatcher("productList.jsp").forward(request,
 				response);
 	}

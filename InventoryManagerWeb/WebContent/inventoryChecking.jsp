@@ -43,7 +43,7 @@
 <body>
 	<form method="post" action="InventoryCheckingServlet">
 		<input type="hidden" id="action" name="action" value="list"/>
-		<input type="hidden" id="pageIndex" name="pageIndex" value="${requestScope.pageIndex }"/>
+		<input type="hidden" id="pageIndex" name="pageIndex" value="${requestScope.pagination.currentPage }"/>
 		<input type="hidden" name="pageSize" value="3"/>
 		<table border="1px">
 			<thead>
@@ -73,9 +73,16 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<input type="button" value="上一页" onclick="changePage(-1)"/>
-		${requestScope.pageIndex }
-		<input type="button" value="下一页" onclick="changePage(1)"/><br/>
+		<c:if test="${requestScope.pagination.currentPage <= 1 }">上一页</c:if>
+		<c:if test="${requestScope.pagination.currentPage > 1 }">
+			<a href="javascript:void(0);" onclick="changePage(-1)">上一页</a>
+		</c:if>
+		${requestScope.pagination.currentPage }
+		<c:if test="${requestScope.pagination.currentPage >= requestScope.pagination.totalPages }">下一页</c:if>
+		<c:if test="${requestScope.pagination.currentPage < requestScope.pagination.totalPages }">
+			<a href="javascript:void(0);" onclick="changePage(1)">下一页</a>
+		</c:if>
+		<br/>
 		<input type="button" value="提交盘点结果" onclick="commit()"/>
 	</form>
 </body>

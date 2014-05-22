@@ -4,11 +4,12 @@ import java.util.List;
 
 import javax.ejb.Local;
 
+import org.lgy.inventory.common.Pagination;
 import org.lgy.inventory.entity.Product;
 
 @Local
 public interface ProductServiceLocal {
-	public List<Product> getProducts(int pageIndex, int pageSize);
+	public List<Product> getProducts(Pagination pagination);
 
 	public Product getProductById(Integer id);
 

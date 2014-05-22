@@ -16,24 +16,24 @@ import javax.servlet.http.HttpSession;
 
 import org.lgy.inventory.common.Pagination;
 import org.lgy.inventory.entity.Product;
+import org.lgy.inventory.service.ProductDeliveryServiceLocal;
 import org.lgy.inventory.service.ProductServiceLocal;
-import org.lgy.inventory.service.ProductStorageServiceLocal;
 
 /**
- * Servlet implementation class ProductStorageServlet
+ * Servlet implementation class ProductDeliveryServlet
  */
-@WebServlet("/ProductStorageServlet")
-public class ProductStorageServlet extends HttpServlet {
+@WebServlet("/ProductDeliveryServlet")
+public class ProductDeliveryServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	private ProductStorageServiceLocal productStorageService;
+	private ProductDeliveryServiceLocal productDeliveryService;
 	@EJB
 	private ProductServiceLocal productService;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ProductStorageServlet() {
+    public ProductDeliveryServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -49,70 +49,68 @@ public class ProductStorageServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String action = (String) request.getParameter("action").trim();
+		String action = request.getParameter("action").trim();
 		if (action.equals("list"))
 			this.getProductForList(request, response);
-		if (action.equals("commit"))
+		else if (action.equals("commit"))
 			this.commit(request, response);
 	}
 
 	private void getProductForList(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		this.addStorageResult(request);
-		String index = (String) request.getParameter("pageIndex");
-		Integer pageIndex = Integer.parseInt(index);
-		String size = (String) request.getParameter("pageSize");
-		Integer pageSize = Integer.parseInt(size);
+		this.saveDeliveryResult(request, response);
+		Integer pageIndex = Integer.parseInt(request.getParameter("pageIndex"));
+		Integer pageSize = Integer.parseInt(request.getParameter("pageSize"));
 		Pagination pagination = new Pagination();
 		pagination.setCurrentPage(pageIndex < 1 ? 1 : pageIndex);
 		pagination.setPageSize(pageSize);
 		List<Product> products = this.productService.getProducts(pagination);
 		request.setAttribute("pagination", pagination);
+		// request.setAttribute("pageIndex", pageIndex);
+		// request.setAttribute("pageSize", pageSize);
 		request.setAttribute("products", products);
-		request.getRequestDispatcher("/productStorage.jsp").forward(request,
+		request.getRequestDispatcher("/productDelivery.jsp").forward(request,
 				response);
 	}
 
 	private void commit(HttpServletRequest request, HttpServletResponse response) {
-		this.addStorageResult(request);
-		this.productStorageService = this.getProductStorageService(request);
-		this.productStorageService.storage();
+		this.saveDeliveryResult(request, response);
+		this.productDeliveryService = this.getProductDeliveryServie(request);
+		this.productDeliveryService.delivery();
 	}
 
-	private ProductStorageServiceLocal getProductStorageService(
+	private void saveDeliveryResult(HttpServletRequest request,
+			HttpServletResponse response) {
+		String[] quantities = request.getParameterValues("deliveryQuantity");
+		if (quantities == null)
+			return;
+		String[] ids = request.getParameterValues("id");
+		this.productDeliveryService = this.getProductDeliveryServie(request);
+		for (int i = 0; i < ids.length; i++) {
+			if (quantities[i] == "")
+				continue;
+			Integer id = Integer.parseInt(ids[i]);
+			Integer quantity = Integer.parseInt(quantities[i]);
+			this.productDeliveryService.addDeliveryResult(id, quantity);
+		}
+	}
+
+	private ProductDeliveryServiceLocal getProductDeliveryServie(
 			HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		ProductStorageServiceLocal service = (ProductStorageServiceLocal) session
-				.getAttribute("productStorageService");
+		ProductDeliveryServiceLocal service = (ProductDeliveryServiceLocal) session
+				.getAttribute("productDeliveryService");
 		if (service == null) {
 			try {
 				Context ctx = new InitialContext();
-				service = (ProductStorageServiceLocal) ctx
-						.lookup("ejb:InventoryManager/InventoryManagerEJB//ProductStorageServiceBean!org.lgy.inventory.service.ProductStorageServiceLocal?stateful");
-				session.setAttribute("productStorageService", service);
+				service = (ProductDeliveryServiceLocal) ctx
+						.lookup("ejb:InventoryManager/InventoryManagerEJB//ProductDeliveryServiceBean!org.lgy.inventory.service.ProductDeliveryServiceLocal?stateful");
+				session.setAttribute("productDeliveryService", service);
 			} catch (NamingException e) {
 				e.printStackTrace();
 			}
-			return service;
 		}
 		return service;
-	}
-
-	private void addStorageResult(HttpServletRequest request) {
-		String[] storageQuantities = request
-				.getParameterValues("storageQuantity");
-		if (storageQuantities == null) {
-			return;
-		}
-		String[] ids = request.getParameterValues("id");
-		this.productStorageService = this.getProductStorageService(request);
-		for (int i = 0; i < ids.length; i++) {
-			if (storageQuantities[i] == "")
-				continue;
-			Integer id = Integer.parseInt(ids[i]);
-			Integer quantity = Integer.parseInt(storageQuantities[i]);
-			this.productStorageService.addStorageResult(id, quantity);
-		}
 	}
 
 }

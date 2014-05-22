@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.lgy.inventory.common.Pagination;
 import org.lgy.inventory.entity.Inventory;
 import org.lgy.inventory.entity.Product;
 import org.lgy.inventory.service.ProductServiceLocal;
@@ -18,8 +19,10 @@ public class ProductServiceBean implements ProductServiceLocal {
 	EntityManager entityManager;
 
 	@Override
-	public List<Product> getProducts(int pageIndex, int pageSize) {
-		int start = (pageIndex - 1) * pageSize;
+	public List<Product> getProducts(Pagination pagination) {
+		int start = pagination.getStart();
+		int pageSize = pagination.getPageSize();
+		pagination.setTotalRecords(this.totalRecords());
 
 		Query query = entityManager.createQuery("from Product");
 		query.setFirstResult(start);
@@ -52,6 +55,11 @@ public class ProductServiceBean implements ProductServiceLocal {
 	public void removeProduct(Product product) {
 		Product p = entityManager.find(Product.class, product.getId());
 		entityManager.remove(p);
+	}
+
+	private long totalRecords() {
+		Query query = entityManager.createQuery("select count(*) from Product");
+		return (Long) query.getSingleResult();
 	}
 
 }
